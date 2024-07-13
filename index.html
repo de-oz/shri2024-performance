@@ -122,9 +122,7 @@
 
             <section class="section main__devices">
                 <div class="section__title">
-                    <h2 class="section__title-header">
-                        Избранные устройства
-                    </h2>
+                    <h2 class="section__title-header">Избранные устройства</h2>
 
                     <select class="section__select">
                         <option value="all" selected>Все</option>
@@ -135,16 +133,16 @@
                     </select>
 
                     <ul role="tablist" class="section__tabs">
-                        <li role="tab" aria-selected="false" class="section__tab" id="tab_all" aria-controls="panel_all" data-id="all">Все</li>
-                        <li role="tab" aria-selected="false" class="section__tab" id="tab_kitchen" aria-controls="panel_kitchen" data-id="kitchen">Кухня</li>
-                        <li role="tab" aria-selected="false" class="section__tab" id="tab_hall" aria-controls="panel_hall" data-id="hall">Зал</li>
-                        <li role="tab" aria-selected="false" class="section__tab" id="tab_lights" aria-controls="panel_lights" data-id="lights">Лампочки</li>
-                        <li role="tab" aria-selected="false" class="section__tab" id="tab_cameras" aria-controls="panel_cameras" data-id="cameras">Камеры</li>
+                        <li role="tab" aria-selected="false" class="section__tab" id="tab_all" aria-controls="panel_all">Все</li>
+                        <li role="tab" aria-selected="false" class="section__tab" id="tab_kitchen" aria-controls="panel_kitchen">Кухня</li>
+                        <li role="tab" aria-selected="false" class="section__tab" id="tab_hall" aria-controls="panel_hall">Зал</li>
+                        <li role="tab" aria-selected="false" class="section__tab" id="tab_lights" aria-controls="panel_lights">Лампочки</li>
+                        <li role="tab" aria-selected="false" class="section__tab" id="tab_cameras" aria-controls="panel_cameras">Камеры</li>
                     </ul>
                 </div>
 
                 <div class="section__panel-wrapper">
-                <div role="tabpanel" class="section__panel section__panel_hidden" aria-hidden="true" id="panel_all" aria-labelledby="tab_all" data-id="all">
+                <div role="tabpanel" class="section__panel section__panel_hidden" aria-hidden="true" id="panel_all" aria-labelledby="tab_all">
                     <ul class="section__panel-list">
                         <li class="event">
                             <button class="event__button">
@@ -3733,7 +3731,7 @@
                     </ul>
                 </div>
 
-                <div role="tabpanel" class="section__panel section__panel_hidden" aria-hidden="true" id="panel_kitchen" aria-labelledby="tab_kitchen" data-id="kitchen">
+                <div role="tabpanel" class="section__panel section__panel_hidden" aria-hidden="true" id="panel_kitchen" aria-labelledby="tab_kitchen">
                     <ul class="section__panel-list">
                         <li class="event">
                             <button class="event__button">
@@ -3752,7 +3750,7 @@
                     </ul>
                 </div>
 
-                <div role="tabpanel" class="section__panel section__panel_hidden" aria-hidden="true" id="panel_hall" aria-labelledby="tab_hall" data-id="hall">
+                <div role="tabpanel" class="section__panel section__panel_hidden" aria-hidden="true" id="panel_hall" aria-labelledby="tab_hall">
                     <ul class="section__panel-list">
                         <li class="event">
                             <button class="event__button">
@@ -3765,13 +3763,13 @@
                             <button class="event__button">
                                 <span class="event__icon event__icon_light2" role="img" aria-label="Освещение"></span>
                                 <h4 class="event__title">Xiaomi Mi Air Purifier 2S</h4>
-                                <span class="event__subtitle">Включено</span>
+                                <span class="event__subtitle">Выключено</span>
                             </button>
                         </li>
                     </ul>
                 </div>
 
-                <div role="tabpanel" class="section__panel section__panel_hidden" aria-hidden="true" id="panel_lights" aria-labelledby="tab_lights" data-id="lights">
+                <div role="tabpanel" class="section__panel section__panel_hidden" aria-hidden="true" id="panel_lights" aria-labelledby="tab_lights">
                     <ul class="section__panel-list">
                         <li class="event">
                             <button class="event__button">
@@ -3798,13 +3796,13 @@
                             <button class="event__button">
                                 <span class="event__icon event__icon_light" role="img" aria-label="Освещение"></span>
                                 <h4 class="event__title">Philips Zhirui</h4>
-                                <span class="event__subtitle">Выключено</span>
+                                <span class="event__subtitle">Включено</span>
                             </button>
                         </li>
                     </ul>
                 </div>
 
-                <div role="tabpanel" class="section__panel section__panel_hidden" aria-hidden="true" id="panel_cameras" aria-labelledby="tab_cameras" data-id="cameras">
+                <div role="tabpanel" class="section__panel section__panel_hidden" aria-hidden="true" id="panel_cameras" aria-labelledby="tab_cameras">
                     <ul class="section__panel-list">
                         <li class="event">
                             <button class="event__button">
@@ -3865,8 +3863,8 @@ function makeTabs(node) {
     const select = node.querySelector('.section__select');
 
     function selectTab(newId) {
-        const newTab = node.querySelector(`.section__tab[data-id=${newId}]`);
-        const newPanel = node.querySelector(`.section__panel[data-id=${newId}]`);
+        const newTab = node.querySelector(`#tab_${newId}`);
+        const newPanel = node.querySelector(`#panel_${newId}`);
         const oldTab = node.querySelector('.section__tab_active');
         const oldPanel = node.querySelector('.section__panel:not(.section__panel_hidden)');
 
@@ -3876,9 +3874,6 @@ function makeTabs(node) {
         newTab.classList.add('section__tab_active');
         newTab.setAttribute('aria-selected', 'true');
         newTab.setAttribute('tabindex', '0');
-        newTab.focus({
-            preventScroll: true,
-        });
 
         oldPanel.classList.add('section__panel_hidden');
         oldPanel.setAttribute('aria-hidden', 'true');
@@ -3921,8 +3916,7 @@ function makeTabs(node) {
     });
 
     bind(tabs, 'click', (event) => {
-        const newId = event.target.dataset.id;
-        selectTab(newId);
+        selectTab(event.target.id.split('_')[1]);
     });
 }
 
