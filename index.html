@@ -3852,70 +3852,23 @@
         <div class='footer__copyright'>© 1997–2023 ООО «Яндекс»</div>
     </footer>
     <script>
-function bind(nodes, event, handler) {
-    Array.from(nodes).forEach((node) => {
-        node.addEventListener(event, handler);
-    });
-}
+const devices = document.querySelector('.main__devices');
+const panelWrapper = devices.querySelector('.section__panel-wrapper');
+const tabs = devices.querySelectorAll('.section__tab');
+const select = devices.querySelector('.section__select');
+const headerMenu = document.querySelector('.header__menu');
+const initialTab = new URLSearchParams(location.search).get('tab') || 'all';
+let arrow;
 
-function makeTabs(node) {
-    const tabs = node.querySelectorAll('.section__tab');
-    const select = node.querySelector('.section__select');
+select.addEventListener('input', () => {
+    selectTab(select.value);
+})
 
-    function selectTab(newId) {
-        const newTab = node.querySelector(`#tab_${newId}`);
-        const newPanel = node.querySelector(`#panel_${newId}`);
-        const oldTab = node.querySelector('.section__tab_active');
-        const oldPanel = node.querySelector('.section__panel:not(.section__panel_hidden)');
+makeMenu(headerMenu);
+selectTab(initialTab);
 
-        oldTab.classList.remove('section__tab_active');
-        oldTab.setAttribute('aria-selected', 'false');
-        oldTab.removeAttribute('tabindex');
-        newTab.classList.add('section__tab_active');
-        newTab.setAttribute('aria-selected', 'true');
-        newTab.setAttribute('tabindex', '0');
-
-        oldPanel.classList.add('section__panel_hidden');
-        oldPanel.setAttribute('aria-hidden', 'true');
-        newPanel.classList.remove('section__panel_hidden');
-        newPanel.setAttribute('aria-hidden', 'false');
-
-        select.value = newId;
-
-        const events = newPanel.querySelectorAll(`.event`);
-        let size = 0;
-        events.forEach((event) => (size += event.offsetWidth));
-
-        const panelWrapper = document.querySelector('.section__panel-wrapper');
-        const arrow = panelWrapper.querySelector('.section__arrow');
-
-        if (size > panelWrapper.offsetWidth && !arrow) {
-            const arrow = document.createElement('div');
-            arrow.className = 'section__arrow';
-
-            const scroller = document.querySelector('.section__panel:not(.section__panel_hidden)');
-
-            arrow.addEventListener('click', () => {
-                if (scroller) {
-                    scroller.scrollTo({
-                        left: scroller.scrollLeft + 400,
-                        behavior: 'smooth',
-                    });
-                }
-            });
-
-            panelWrapper.appendChild(arrow);
-        } else if (size <= panelWrapper.offsetWidth && arrow) {
-            arrow.remove();
-        }
-
-    }
-
-    select.addEventListener('input', () => {
-        selectTab(select.value);
-    });
-
-    bind(tabs, 'click', (event) => {
+for (let i = 0; i < tabs.length; i++) {
+    tabs[i].addEventListener('click', (event) => {
         selectTab(event.target.id.split('_')[1]);
     });
 }
@@ -3935,45 +3888,54 @@ function makeMenu(node) {
     });
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    Array.from(document.querySelectorAll('.main__devices')).forEach(makeTabs);
-    Array.from(document.querySelectorAll('.header__menu')).forEach(makeMenu);
-});
+function selectTab(tab) {
+    select.value = tab;
+    const activeTab = devices.querySelector(`#tab_${tab}`);
+    const activePanel = devices.querySelector(`#panel_${tab}`);
+    const oldTab = devices.querySelector('.section__tab_active');
+    const oldPanel = devices.querySelector('.section__panel:not(.section__panel_hidden)');
 
-let activeTab = new URLSearchParams(location.search).get('tab') || 'all';
-let activeTabNode = document.querySelector(`#tab_${activeTab}`);
-activeTabNode.classList.add('section__tab_active');
-activeTabNode.setAttribute('aria-selected', 'true');
-activeTabNode.setAttribute('tabindex', '0');
+    activeTab.classList.add('section__tab_active');
+    activeTab.setAttribute('aria-selected', 'true');
+    activeTab.setAttribute('tabindex', '0');
 
-let activePanel = document.querySelector(`#panel_${activeTab}`);
-activePanel.classList.remove('section__panel_hidden');
-activePanel.setAttribute('aria-hidden', 'false');
+    if (oldTab) {
+        oldTab.classList.remove('section__tab_active');
+        oldTab.setAttribute('aria-selected', 'false');
+        oldTab.removeAttribute('tabindex');
+    }
 
-const events = document.querySelectorAll(`#panel_${activeTab} .event`);
-let size = 0;
-events.forEach((event) => (size += event.offsetWidth));
+    activePanel.classList.remove('section__panel_hidden');
+    activePanel.setAttribute('aria-hidden', 'false');
 
-const panelWrapper = document.querySelector('.section__panel-wrapper');
+    if (oldPanel) {
+        oldPanel.classList.add('section__panel_hidden');
+        oldPanel.setAttribute('aria-hidden', 'true');
+    }
 
-if (size > panelWrapper.offsetWidth) {
-    const arrow = document.createElement('div');
-    arrow.className = 'section__arrow';
+    const events = activePanel.querySelectorAll(`.event`);
+    let size = 0;
+    for (let i = 0; i < events.length && size <= panelWrapper.offsetWidth; i++) {
+        size += events[i].offsetWidth;
+    }
 
-    const scroller = document.querySelector('.section__panel:not(.section__panel_hidden)');
+    if (size > panelWrapper.offsetWidth && !arrow) {
+        const arrowBtn = document.createElement('div');
+        arrowBtn.className = 'section__arrow';
 
-    arrow.addEventListener('click', () => {
-        if (scroller) {
-            scroller.scrollTo({
-                left: scroller.scrollLeft + 400,
+        arrowBtn.addEventListener('click', () => {
+            activePanel.scrollTo({
+                left: activePanel.scrollLeft + 400,
                 behavior: 'smooth',
             });
-        }
-    });
+        });
 
-    panelWrapper.appendChild(arrow);
+        arrow = arrowBtn;
+        panelWrapper.appendChild(arrowBtn);
+    } else if (size <= panelWrapper.offsetWidth && arrow) {
+        arrow = arrow.remove();
+    }
 }
-
     </script>
   </body>
 </html>
